@@ -56,9 +56,9 @@ RUN git clone https://github.com/ros-industrial/ros_canopen.git /tmp/ros_canopen
     rm -rf /tmp/ros_canopen
 
 WORKDIR /opt/fira_ws
-# RUN rosdep init || true && rosdep update
-# RUN . /opt/ros/noetic/setup.bash && \
-#    rosdep install --from-paths src --ignore-src -r -y --rosdistro noetic
+RUN rosdep init || true && rosdep update
+RUN /bin/bash -c ". /opt/ros/noetic/setup.bash && \
+    rosdep install --from-paths src --ignore-src -r -y --rosdistro noetic"
 RUN /bin/bash -c ". /opt/ros/noetic/setup.bash && \
     catkin_make -DCMAKE_INSTALL_PREFIX=/opt/ros/noetic && \
     catkin_make install -DCMAKE_INSTALL_PREFIX=/opt/ros/noetic"
