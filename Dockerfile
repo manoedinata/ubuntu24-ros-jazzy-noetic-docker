@@ -39,9 +39,9 @@ RUN apt-get update && apt-get install -y \
     cmake
 
 # Build and install additional ROS Noetic packages from source
-# (four_wheel_steering_msgs, urdf_geometry_parser, ros_controllers, velodyne),
+# (four_wheel_steering_msgs, urdf_geometry_parser, ros_controllers, velodyne, can_msgs),
 # pinned to the commits currently checked out in fira_simulation_ws_3/src.
-# can_msgs, FIRA-Autonomous-Cars-Simulator, and ros1_bridge are intentionally excluded.
+# FIRA-Autonomous-Cars-Simulator and ros1_bridge are intentionally excluded.
 WORKDIR /opt/fira_ws/src
 RUN git clone https://github.com/ros-drivers/four_wheel_steering_msgs.git && \
     cd four_wheel_steering_msgs && git checkout 1bcea815f85efbfadfac41518de5f741d2c258d4
@@ -51,6 +51,9 @@ RUN git clone https://github.com/ros-controls/ros_controllers.git && \
     cd ros_controllers && git checkout c2348e85abf35cf33cf654a84d61db206abe9a73
 RUN git clone https://github.com/ros-drivers/velodyne.git && \
     cd velodyne && git checkout b8096297fa4eeadd5f3bb83a282fd3e21c531171
+RUN git clone https://github.com/ros-industrial/ros_canopen.git /tmp/ros_canopen && \
+    cp -r /tmp/ros_canopen/can_msgs /opt/fira_ws/src/can_msgs && \
+    rm -rf /tmp/ros_canopen
 
 WORKDIR /opt/fira_ws
 # RUN rosdep init || true && rosdep update
