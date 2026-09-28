@@ -56,9 +56,9 @@ WORKDIR /opt/fira_ws
 # RUN rosdep init || true && rosdep update
 # RUN . /opt/ros/noetic/setup.bash && \
 #    rosdep install --from-paths src --ignore-src -r -y --rosdistro noetic
-RUN . /opt/ros/noetic/setup.bash && \
+RUN /bin/bash -c ". /opt/ros/noetic/setup.bash && \
     catkin_make -DCMAKE_INSTALL_PREFIX=/opt/ros/noetic && \
-    catkin_make install -DCMAKE_INSTALL_PREFIX=/opt/ros/noetic
+    catkin_make install -DCMAKE_INSTALL_PREFIX=/opt/ros/noetic"
 
 WORKDIR /
 RUN rm -rf /opt/fira_ws
