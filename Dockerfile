@@ -41,7 +41,8 @@ RUN apt-get update && apt-get install -y \
 # Build and install additional ROS Noetic packages from source
 # (four_wheel_steering_msgs, urdf_geometry_parser, ros_controllers, velodyne, can_msgs),
 # pinned to the commits currently checked out in fira_simulation_ws_3/src.
-# FIRA-Autonomous-Cars-Simulator and ros1_bridge are intentionally excluded.
+# FIRA-Autonomous-Cars-Simulator is intentionally excluded. ros1_bridge is
+# built separately below since it needs both ROS distros sourced.
 WORKDIR /opt/fira_ws/src
 RUN git clone https://github.com/ros-drivers/four_wheel_steering_msgs.git && \
     cd four_wheel_steering_msgs && git checkout 1bcea815f85efbfadfac41518de5f741d2c258d4
@@ -65,6 +66,21 @@ RUN /bin/bash -c ". /opt/ros/noetic/setup.bash && \
 
 WORKDIR /
 RUN rm -rf /opt/fira_ws
+
+# Build and install ros1_bridge (bridges ROS 1 Noetic <-> ROS 2 Jazzy).
+# Requires both ROS distros sourced at once, per the upstream README.
+WORKDIR /opt/ros1_bridge_ws/src
+RUN git clone https://github.com/ros2/ros1_bridge.git && \
+    cd ros1_bridge && git checkout 611755fd917285316051cbea80507e8b2f6b7ec1
+
+WORKDIR /opt/ros1_bridge_ws
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && \
+    source /opt/ros/jazzy/setup.bash && \
+    colcon build --merge-install --install-base /opt/ros/jazzy \
+        --packages-select ros1_bridge --cmake-force-configure"
+
+WORKDIR /
+RUN rm -rf /opt/ros1_bridge_ws
 
 # RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
